@@ -1,0 +1,5 @@
+(executable
+ (public_name biscuit)
+ (name main)
+ (modules main validate)
+ (libraries biscuit cmdliner))

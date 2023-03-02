@@ -1,0 +1,12 @@
+(menhir
+ (modules parser))
+
+(ocamllex lexer)
+
+(library
+ (name biscuit_parser)
+ (modules biscuit_parser parser lexer ast)
+ (libraries core ptime)
+ (inline_tests)
+ (preprocess
+  (pps ppx_jane)))

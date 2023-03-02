@@ -1,0 +1,7 @@
+(library
+ (name biscuit)
+ (modules biscuit)
+ (libraries core biscuit_parser)
+ (inline_tests)
+ (preprocess
+  (pps ppx_jane)))

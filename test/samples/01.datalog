@@ -1,0 +1,3 @@
+right("file1", "read");
+right("file2", "read");
+right("file1", "write");
