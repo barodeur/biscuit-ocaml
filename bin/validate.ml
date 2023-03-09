@@ -1,4 +1,5 @@
 open Core
+open Core.Result.Let_syntax
 
 let channel_of_path = function
   | "-" -> In_channel.stdin
@@ -7,13 +8,9 @@ let channel_of_path = function
 let validate path =
   let channel = channel_of_path path in
   let result = Biscuit_parser.parse_channel channel in
-  let _ =
-    result
-    |> Result.map_error ~f:(function Biscuit_parser.ParserError msg -> msg)
-    |> Result.ok_or_failwith
-  in
+  let%bind _ = result |> Result.map_error ~f:Biscuit_parser.Error.to_string in
   print_endline "Token is valid!";
-  ()
+  Ok ()
 
 module Cmd = struct
   open Cmdliner

@@ -1,7 +1,11 @@
 open Core
 open Lexing
 
-type parser_error = ParserError of string
+module Error = struct
+  type t = ParserError of string
+
+  let to_string = function ParserError msg -> msg
+end
 
 let position_to_string lexbuf =
   let pos = lexbuf.lex_curr_p in
@@ -11,7 +15,7 @@ let parse_lexbuf lexbuf =
   try Ok (Parser.block Lexer.token lexbuf)
   with Parser.Error ->
     let msg = sprintf "%s: syntax error\n" (position_to_string lexbuf) in
-    Error (ParserError msg)
+    Error (Error.ParserError msg)
 
 let ( >> ) f g x = g (f x)
 let parse_string = Lexing.from_string >> parse_lexbuf
@@ -22,7 +26,7 @@ module Authorizer = struct
     try Ok (Parser.authorizer Lexer.token lexbuf)
     with Parser.Error ->
       let msg = sprintf "%s: syntax error\n" (position_to_string lexbuf) in
-      Error (ParserError msg)
+      Error (Error.ParserError msg)
 
   let parse_string = Lexing.from_string >> parse_lexbuf
   let parse_channel = Lexing.from_channel >> parse_lexbuf
@@ -32,7 +36,7 @@ let%test_module "Tests" =
   (module struct
     let parse_and_print =
       parse_string
-      >> Result.map_error ~f:(function ParserError msg -> msg)
+      >> Result.map_error ~f:(function Error.ParserError msg -> msg)
       >> Result.ok_or_failwith >> Ast.Block.print
 
     let%expect_test _ =
