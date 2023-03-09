@@ -26,11 +26,16 @@ rule token =
   | ']' { BRACKET_CLOSE }
   | '"' { read_string (Buffer.create 17) lexbuf }
   | '!' { EXCLAMATION_MARK }
-  | '=' { EQUAL }
+  | "==" { EQUAL }
   | '<' { LOWER_THAN }
   | "<=" { LOWER_EQUAL_THAN }
   | '>' { GREATER_THAN }
   | "=>" { GREATER_EQUAL_THAN }
+  | '&' { BW_AND }
+  | '|' { BW_OR }
+  | '^' { BW_XOR }
+  | "||" { BOOL_OR }
+  | "&&" { BOOL_AND }
   | "allow" { ALLOW }
   | "deny" { DENY }
   | "check" { CHECK }

@@ -23,12 +23,27 @@
 %token GREATER_EQUAL_THAN
 %token LOWER_THAN
 %token LOWER_EQUAL_THAN
+%token MULT
+%token DIV
+%token PLUS
+%token MINUS
+%token BW_OR
+%token BW_AND
+%token BW_XOR
+%token BOOL_OR
+%token BOOL_AND
+%token AND
+%token OR
 %token ALLOW
 %token DENY
 %token LEFT_ARROW
-%token OR
 %token EXCLAMATION_MARK
 %token EOI
+%left MULT DIV
+%left PLUS MINUS
+%left BW_OR BW_AND BW_XOR
+%nonassoc EQUAL GREATER_THAN GREATER_EQUAL_THAN LOWER_THAN LOWER_EQUAL_THAN
+%left BOOL_OR BOOL_AND
 %start <Ast.Block.t> block
 %start <Ast.Authorizer.t> authorizer
 %%
@@ -83,11 +98,8 @@ term:
   | VARIABLE { Term.Variable $1 }
 
 expression:
-  | expression_element { ($1, []) }
-  | expression_element nonempty_list(expression_inner) { ($1, $2) }
-
-expression_inner:
-  operator expression_element { ($1, $2) }
+  | expression_element { Expression.Leaf $1 }
+  | expression_element operator expression_element { Expression.Node ($1, $2, $3) }
 
 operator:
   | EQUAL { Operator.Equal }
@@ -95,6 +107,15 @@ operator:
   | GREATER_EQUAL_THAN { Operator.GreaterEqualThan }
   | LOWER_THAN { Operator.LowerThan }
   | LOWER_EQUAL_THAN { Operator.LowerEqualThan }
+  | MULT { Operator.Mult }
+  | DIV { Operator.Div }
+  | PLUS { Operator.Plus }
+  | MINUS { Operator.Minus }
+  | BW_OR { Operator.BwOr }
+  | BW_AND { Operator.BwAnd }
+  | BW_XOR { Operator.BwXor }
+  | BOOL_OR { Operator.Or }
+  | BOOL_AND { Operator.And }
 
 expression_element:
   | expression_unary { Expression.Unary $1 }

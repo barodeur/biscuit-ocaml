@@ -49,7 +49,21 @@ module Predicate = struct
 end
 
 module Operator = struct
-  type t = Equal | GreaterThan | GreaterEqualThan | LowerThan | LowerEqualThan
+  type t =
+    | Equal
+    | GreaterThan
+    | GreaterEqualThan
+    | LowerThan
+    | LowerEqualThan
+    | Mult
+    | Div
+    | Plus
+    | Minus
+    | BwAnd
+    | BwOr
+    | BwXor
+    | And
+    | Or
   [@@deriving sexp]
 end
 
@@ -59,7 +73,7 @@ module Expression = struct
   end
 
   type term = Term of Term.t | Expression of t [@@deriving sexp]
-  and t = element * (Operator.t * element) list
+  and t = Leaf of element | Node of (element * Operator.t * element)
 
   and element =
     | Unary of t
